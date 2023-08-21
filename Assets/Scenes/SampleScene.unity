@@ -403,7 +403,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa383dcc74060f149bf656ca5698541c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 100
+  speed: 300
 --- !u!1 &1178015962
 GameObject:
   m_ObjectHideFlags: 0
@@ -717,7 +717,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c60e1c5c1cf37d84ca39424e04bb4a1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 100
+  speed: 300
 --- !u!114 &1516375215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -734,6 +734,7 @@ MonoBehaviour:
   yVelocity: 0
   jumpHigh: 15
   isJumping: 0
+  hp: 5
 --- !u!143 &1516375216
 CharacterController:
   m_ObjectHideFlags: 0
@@ -777,6 +778,7 @@ MonoBehaviour:
   power: 20
   playerFire: {fileID: 0}
   hitEffect: {fileID: 367315326}
+  weaponPower: 2
 --- !u!1 &1574136854
 GameObject:
   m_ObjectHideFlags: 0
@@ -893,7 +895,7 @@ GameObject:
   - component: {fileID: 1607719407}
   - component: {fileID: 1607719406}
   - component: {fileID: 1607719410}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1004,9 +1006,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   findDistance: 20
-  moveSpeed: 5
-  attackDistance: 8
+  moveSpeed: 8
+  attackDistance: 3
   attackTime: 1
+  attackPower: 3
+  moveArea: 30
+  hp: 3
 --- !u!1 &1866650087
 GameObject:
   m_ObjectHideFlags: 0

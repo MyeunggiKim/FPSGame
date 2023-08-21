@@ -16,6 +16,9 @@ using UnityEngine;
 
 //목적3: 점프 중인지 확인하고, 점프 중이라면 점프전 상태로 초기화 하고 싶다.
 
+//목적4: 플레이어가 공격을 당하면 hp를 damege 만큼 깎는다.
+//hp
+
 
 public class PlayerMove : MonoBehaviour
 {
@@ -29,6 +32,7 @@ public class PlayerMove : MonoBehaviour
     public float jumpHigh= 10.0f;
     public bool isJumping = false;
 
+    public int hp = 5;
 
 
     private void Start()
@@ -80,7 +84,10 @@ public class PlayerMove : MonoBehaviour
         //플레이어를 이동시킨다
         //transform.position += dir * Time.deltaTime * speed;
         playerController.Move(dir*speed*Time.deltaTime);
+    }
 
-
+    public void DamageAction(int damage)
+    {
+        hp -= damage;
     }
 }

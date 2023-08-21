@@ -15,6 +15,9 @@ using UnityEngine;
 //레이를 발사하고 부딪힌 물체가 있으면 그 위치에 피격 효과를 만든다.
 //피격 효과 게임 오브젝트 , 이펙트의 파티클 시스템
 
+//레이가 부딪힌 대상이 Enemy라면 Enemy에게 데미지를 주겠다.
+
+
 public class PlayerFire : MonoBehaviour
 {
     public GameObject bomb;
@@ -53,6 +56,7 @@ public class PlayerFire : MonoBehaviour
         print(string.Format("몫: {0}, 나머지: {1}", quotient, remainder));*/
     }
     //int remainder;
+    public int weaponPower = 2;
 
 
     // Update is called once per frame
@@ -85,7 +89,15 @@ public class PlayerFire : MonoBehaviour
                 hitEffect.transform.position = hitInfo.point;
                 hitEffect.transform.forward= hitInfo.normal;
 
+                //피격 이펙트를 재생한다.
                 particleSystem.Play();
+
+                //레이가 부딪힌 대상이 Enemy라면 Enemy에게 데미지를 주겠다.
+                if (hitInfo.transform.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+                {
+                    EnemyFSM enemyFSM = hitInfo.transform.GetComponent<EnemyFSM>();
+                    enemyFSM.DamageAction(weaponPower);
+                }
             }
         }
     }
