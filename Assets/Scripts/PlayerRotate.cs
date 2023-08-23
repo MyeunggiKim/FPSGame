@@ -9,7 +9,11 @@ public class PlayerRotate : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {        
+    {
+        if (GameManager.Instance.state != GameManager.GameState.Start)
+        {
+            return;
+        }
 
         //마우스의 입력.
         float mouseX = Input.GetAxis("Mouse X");

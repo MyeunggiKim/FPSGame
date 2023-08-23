@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.AI;
 
 //적을 FSM 다이어그램에 따라 동작시키고 싶다.
 //적 상태
@@ -24,6 +26,12 @@ using UnityEngine;
 //hp
 
 //죽었을 경우 2초 후에 자신을 제거한다.
+
+//<Alpha upgrade>
+//Idle 상태에서 Move 상태로 Animation을 전환한다.
+//Animator
+
+//네비게이션 에이전트가 플레이어를 따라갈 수 있도록 한다.
 public class EnemyFSM : MonoBehaviour
 {
     //적 상태
@@ -61,6 +69,8 @@ public class EnemyFSM : MonoBehaviour
 
     public int hp = 3;
 
+    Animator animator;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -71,11 +81,15 @@ public class EnemyFSM : MonoBehaviour
         characterController = GetComponent<CharacterController>();
 
         sponPoint = transform.position;
+
+        animator = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
+
+
         //적을 FSM 다이어그램에 따라 동작시키고 싶다.
         switch (enemyState)
         {
@@ -146,13 +160,16 @@ public class EnemyFSM : MonoBehaviour
             enemyState = EnemyState.Die;
             print("상태 전환: Any State -> Die");
             Die();
+            animator.SetTrigger("Die");
         }
     }
 
     private void Damaged()
     {
-        StartCoroutine(DamageProcess());
 
+        animator.SetTrigger("Damaged");
+
+        StartCoroutine(DamageProcess());
     }
 
     IEnumerator DamageProcess()
@@ -164,6 +181,8 @@ public class EnemyFSM : MonoBehaviour
 
         enemyState = EnemyState.Move;
         print("상태 전환: Damaged -> Move");
+
+        animator.SetTrigger("DamagedToMove");
     }
 
     private void Return()
@@ -173,12 +192,14 @@ public class EnemyFSM : MonoBehaviour
         if (distanceToSponPoint > retrunDistance)
         {
             Vector3 dir = ( sponPoint - transform.position).normalized;
-            characterController.Move( dir*moveSpeed*Time.deltaTime );
+            characterController.Move( dir*moveSpeed*Time.deltaTime );  
         }
         else
         {
             enemyState = EnemyState.Idle;
             print("상태 전환:Retrun -> Idel");
+
+            animator.SetTrigger("ReturnToIdle");
         }
     }
 
@@ -193,9 +214,16 @@ public class EnemyFSM : MonoBehaviour
             //공격딜레이마다 한번씩 공격한다.
             if(currentTime >= attackTime)
             {
-                player.GetComponent<PlayerMove>().DamageAction(attackPower);
-                print("공격");
-                currentTime = 0;
+                if (player.GetComponent<PlayerMove>().hp >= 0)
+                {
+                    //player.GetComponent<PlayerMove>().DamageAction(attackPower);
+                    print("공격");
+
+                }
+            currentTime = 0;
+            //여기에 애니메이션 트리거를 넣어야 한다.
+            animator.SetTrigger("AttackToAttackDelay");
+                    
             }
         }
         //그렇지 않으면 플레이어를 추적한다.
@@ -203,6 +231,11 @@ public class EnemyFSM : MonoBehaviour
         {
             enemyState = EnemyState.Move;
             print("상태 전환: Attack -> Move");
+            animator.SetTrigger("AttackToMove");
+        }
+        else
+        {
+            enemyState=EnemyState.Move;
         }
     }
 
@@ -218,23 +251,35 @@ public class EnemyFSM : MonoBehaviour
         {
             enemyState = EnemyState.Return;
             print("상태 전환: Move -> Retrun");
+
+            transform.forward = (player.position - transform.position).normalized;
+            
+            animator.SetTrigger("Return");
         }
         if (distanceToPlayer > attackDistance)
         {
             Vector3 dir = (player.position - transform.position).normalized;
 
             characterController.Move(dir*Time.deltaTime*moveSpeed);
+
+            transform.forward = dir;
+
+            
         }
         if (distanceToPlayer <= attackDistance)
         {
             enemyState = EnemyState.Attack;
             print("상태 전환: Move ->  Attack");
             currentTime = attackTime;
+
+            animator.SetTrigger("RunToAttack");
         }
         else if (distanceToPlayer >= findDistance)
         {
             enemyState = EnemyState.Idle;
-            print("상태 전환: Move -> Idle");            
+            print("상태 전환: Move -> Idle");
+
+            animator.SetTrigger("MoveToIdle");
         }
     }
 
@@ -247,7 +292,9 @@ public class EnemyFSM : MonoBehaviour
         if (distnaceToPlayer < findDistance)
         {
             enemyState = EnemyState.Move;
-            print("상태전환: Idle->Move");            
+            print("상태전환: Idle->Move");
+
+            animator.SetTrigger("IdleToRun");
         }
     }
 }

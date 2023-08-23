@@ -17,6 +17,8 @@ using UnityEngine;
 
 //레이가 부딪힌 대상이 Enemy라면 Enemy에게 데미지를 주겠다.
 
+//이동 블랜드 트리의 파라미터 값이 0일 경우, Attack Trigger를 시전한다.
+//자식 오브젝트의 애니메이션
 
 public class PlayerFire : MonoBehaviour
 {
@@ -28,9 +30,9 @@ public class PlayerFire : MonoBehaviour
     private Transform myTransform;
 
     public GameObject hitEffect;
-    ParticleSystem particleSystem;
+    new ParticleSystem particleSystem;
 
-
+    Animator animator;
 
     private void Awake()
     {
@@ -42,6 +44,9 @@ public class PlayerFire : MonoBehaviour
     private void Start()
     {
         particleSystem =hitEffect.GetComponent<ParticleSystem>();
+
+        animator = GameObject.GetComponent<Animator>();
+
 
         /*int x = 3;
         int y = 4;
@@ -62,6 +67,10 @@ public class PlayerFire : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.Instance.state != GameManager.GameState.Start)
+        {
+            return;
+        }
         if (Input.GetMouseButtonDown(1))// 좌클릭(0), 우클릭(1), 휠클릭(2)
         {
             GameObject bombGO = Instantiate(bomb);
@@ -74,6 +83,11 @@ public class PlayerFire : MonoBehaviour
         //마우스 왼쪽 버튼을 누른다.
         if(Input.GetMouseButtonDown(0))
         {
+            if (animator.GetFloat("MoveMotion")==0)
+            {
+                animator.SetTrigger("Attack");
+            }
+
             //레이를 생성하고 발사위치 발사방향을 설정한다.
             Ray ray =new Ray(Camera.main.transform.position,Camera.main.transform.forward);
 
